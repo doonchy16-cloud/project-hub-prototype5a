@@ -1007,7 +1007,7 @@ function MapView({ mode, projects, highlightedIds, activeProjectId, onSelectProj
       {mode === "mini" && (
         <button
           onClick={onOpenFullscreen}
-          className="absolute inset-0 z-[500] flex items-start justify-end bg-transparent p-3"
+          className="absolute inset-0 z-20 flex items-start justify-end bg-transparent p-3"
           aria-label="Open fullscreen map"
         >
           <span
@@ -1668,68 +1668,141 @@ export default function Prototype5() {
   return (
     <div className={`min-h-screen ${shellTextClass}`} style={{ backgroundColor: themeStyles.appBg }}>
       {fullscreenMapOpen && (
-        <div className="fixed inset-0 z-50 flex flex-col" style={{ backgroundColor: "rgba(2, 6, 23, 0.78)" }}>
-          <div className="flex items-center justify-between gap-4 border-b px-6 py-4" style={{ backgroundColor: themeStyles.panel, borderColor: themeStyles.border }}>
-            <div>
-              <h2 className="text-2xl font-semibold">Full project map</h2>
-              <p className={`mt-1 text-sm ${mutedTextClass}`}>All public projects are visible here. Search results stay highlighted.</p>
+        <div
+          className="fixed inset-0 z-[2000] flex items-center justify-center p-4 md:p-6"
+          style={{ backgroundColor: "rgba(2, 6, 23, 0.78)" }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            className="flex h-[92vh] w-full max-w-[1500px] flex-col overflow-hidden rounded-[32px] border"
+            style={{
+              backgroundColor: themeStyles.panel,
+              borderColor: themeStyles.border,
+              boxShadow: "0 30px 80px rgba(0, 0, 0, 0.4)",
+            }}
+          >
+            <div
+              className="flex items-center justify-between gap-4 border-b px-6 py-4"
+              style={{ borderColor: themeStyles.border }}
+            >
+              <div>
+                <h2 className="text-2xl font-semibold">Full project map</h2>
+                <p className={`mt-1 text-sm ${mutedTextClass}`}>
+                  All public projects are visible here. Search results stay highlighted.
+                </p>
+              </div>
+
+              <ThemeButton
+                themeStyles={themeStyles}
+                onClick={() => setFullscreenMapOpen(false)}
+              >
+                <X className="mr-2 inline h-4 w-4" />
+                Close map
+              </ThemeButton>
             </div>
-            <ThemeButton themeStyles={themeStyles} onClick={() => setFullscreenMapOpen(false)}>
-              <X className="mr-2 inline h-4 w-4" /> Close map
-            </ThemeButton>
-          </div>
-          <div className="grid flex-1 gap-4 p-6 lg:grid-cols-[1.4fr_0.6fr]">
-            <InfoCard themeStyles={themeStyles} className="overflow-hidden p-3">
-              <div className="h-[70vh] min-h-[520px] w-full">
-                <MapView
-                  mode="full"
-                  projects={sharedProjectsSeed}
-                  highlightedIds={projectSearchQuery.trim() ? projectsPageHighlightedIds : []}
-                  activeProjectId={activeMapProject?.id ?? null}
-                  onSelectProject={(project) => {
-                    setActiveMapProject(project);
-                    addActivity(`Selected ${project.title} on fullscreen map`);
-                  }}
-                  themeStyles={themeStyles}
-                />
-              </div>
-            </InfoCard>
-            <InfoCard themeStyles={themeStyles} className="p-5">
-              <div className="mb-4 flex items-center justify-between gap-3">
-                <h3 className="text-xl font-semibold">Map project preview</h3>
-                {projectSearchQuery && (
-                  <span className="rounded-full px-3 py-1 text-xs font-medium" style={{ backgroundColor: themeStyles.pill, color: themeStyles.text }}>
-                    {projectsPageSearchResults.length} match{projectsPageSearchResults.length === 1 ? "" : "es"}
-                  </span>
-                )}
-              </div>
-              {activeMapProject ? (
-                <div className="flex h-full flex-col justify-between gap-4">
-                  <div>
-                    <div className="inline-flex rounded-full border px-3 py-1 text-xs" style={{ backgroundColor: themeStyles.pill, borderColor: themeStyles.border, color: themeStyles.muted }}>{activeMapProject.category}</div>
-                    <h4 className="mt-4 text-xl font-semibold">{activeMapProject.title}</h4>
-                    <div className={`mt-3 flex items-center gap-2 text-sm ${mutedTextClass}`}><MapPin className="h-4 w-4" /><span>{activeMapProject.location}</span></div>
-                    <p className={`mt-4 text-sm leading-7 ${mutedTextClass}`}>{activeMapProject.description}</p>
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {activeMapProject.tags.map((tag) => (
-                        <span key={tag} className="inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs" style={{ backgroundColor: themeStyles.pill, borderColor: themeStyles.border, color: themeStyles.text }}>
-                          <Tag className="h-3 w-3" />{tag}
-                        </span>
-                      ))}
+
+            <div className="grid min-h-0 flex-1 gap-4 p-6 lg:grid-cols-[1.4fr_0.6fr]">
+              <InfoCard themeStyles={themeStyles} className="min-h-0 overflow-hidden p-3">
+                <div className="h-full min-h-[520px] w-full">
+                  <MapView
+                    mode="full"
+                    projects={sharedProjectsSeed}
+                    highlightedIds={projectSearchQuery.trim() ? projectsPageHighlightedIds : []}
+                    activeProjectId={activeMapProject?.id ?? null}
+                    onSelectProject={(project) => {
+                      setActiveMapProject(project);
+                      addActivity(`Selected ${project.title} on fullscreen map`);
+                    }}
+                    themeStyles={themeStyles}
+                  />
+                </div>
+              </InfoCard>
+
+              <InfoCard themeStyles={themeStyles} className="min-h-0 overflow-y-auto p-5">
+                <div className="mb-4 flex items-center justify-between gap-3">
+                  <h3 className="text-xl font-semibold">Map project preview</h3>
+
+                  {projectSearchQuery && (
+                    <span
+                      className="rounded-full px-3 py-1 text-xs font-medium"
+                      style={{
+                        backgroundColor: themeStyles.pill,
+                        color: themeStyles.text,
+                      }}
+                    >
+                      {projectsPageSearchResults.length} match
+                      {projectsPageSearchResults.length === 1 ? "" : "es"}
+                    </span>
+                  )}
+                </div>
+
+                {activeMapProject ? (
+                  <div className="flex h-full flex-col justify-between gap-4">
+                    <div>
+                      <div
+                        className="inline-flex rounded-full border px-3 py-1 text-xs"
+                        style={{
+                          backgroundColor: themeStyles.pill,
+                          borderColor: themeStyles.border,
+                          color: themeStyles.muted,
+                        }}
+                      >
+                        {activeMapProject.category}
+                      </div>
+
+                      <h4 className="mt-4 text-xl font-semibold">{activeMapProject.title}</h4>
+
+                      <div className={`mt-3 flex items-center gap-2 text-sm ${mutedTextClass}`}>
+                        <MapPin className="h-4 w-4" />
+                        <span>{activeMapProject.location}</span>
+                      </div>
+
+                      <p className={`mt-4 text-sm leading-7 ${mutedTextClass}`}>
+                        {activeMapProject.description}
+                      </p>
+
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        {activeMapProject.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs"
+                            style={{
+                              backgroundColor: themeStyles.pill,
+                              borderColor: themeStyles.border,
+                              color: themeStyles.text,
+                            }}
+                          >
+                            <Tag className="h-3 w-3" />
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end">
+                      <ThemeButton
+                        themeStyles={themeStyles}
+                        active
+                        onClick={() => openProjectDetail(activeMapProject)}
+                      >
+                        See full project details
+                      </ThemeButton>
                     </div>
                   </div>
-                  <div className="flex justify-end">
-                    <ThemeButton themeStyles={themeStyles} active onClick={() => openProjectDetail(activeMapProject)}>
-                      See full project details
-                    </ThemeButton>
+                ) : (
+                  <div
+                    className={`rounded-2xl border p-4 text-sm leading-7 ${mutedTextClass}`}
+                    style={{
+                      borderColor: themeStyles.border,
+                      backgroundColor: themeStyles.pill,
+                    }}
+                  >
+                    Click any pin on the fullscreen map to open its project card here.
                   </div>
-                </div>
-              ) : (
-                <div className={`rounded-2xl border p-4 text-sm leading-7 ${mutedTextClass}`} style={{ borderColor: themeStyles.border, backgroundColor: themeStyles.pill }}>
-                  Click any pin on the fullscreen map to open its project card here.
-                </div>
-              )}
-            </InfoCard>
+                )}
+              </InfoCard>
+            </div>
           </div>
         </div>
       )}
