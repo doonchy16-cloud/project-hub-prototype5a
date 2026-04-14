@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+  border-radius: 24px;
+}
+
+.project-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  border: 2px solid white;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.24);
+}
+
+.project-marker.recommended {
+  width: 22px;
+  height: 22px;
+}
+
+.project-marker.highlighted {
+  outline: 3px solid rgba(250, 204, 21, 0.55);
+}
